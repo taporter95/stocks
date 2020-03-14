@@ -1,0 +1,4 @@
+iex:
+  publishable_token: <%= ENV['IEX_API_PUBLISHABLE_TOKEN'] %>
+  secret_token: <%= ENV['IEX_API_SECRET_TOKEN'] %>
+  endpoint: <%= ENV['IEX_API_ENDPOINT'] %>

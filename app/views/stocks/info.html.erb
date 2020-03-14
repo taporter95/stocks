@@ -1,0 +1,23 @@
+<br>
+<%= link_to "Stocks Index", stocks_path %>
+<br>
+<br>
+
+<div>
+    <h2>
+        <%= @stock_info[:company].symbol %>
+    </h2>
+    <p>
+        <strong>Name:</strong>
+        <%= @stock_info[:company].company_name %>
+    </p>
+    <p>
+        <strong>CEO:</strong>
+        <%= @stock_info[:company].ceo %>
+    </p>
+</div>
+
+<p>
+    <strong>Price:</strong>
+    <%= @stock_info[:price] %>
+</p>
