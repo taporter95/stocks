@@ -1,0 +1,10 @@
+<div>
+    <table>
+        <% @list.each do |stock| %>
+            <tr>
+                <td><%= link_to stock["symbol"], info_stocks_path(ticker: stock["symbol"]) %></td>
+                <td><%= stock["companyName"] %></td>
+            </tr>
+        <% end %>
+    </table>
+</div>
