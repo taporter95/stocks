@@ -3,15 +3,20 @@ class StocksController < ApplicationController
     end
 
     def show 
-        @stock_data = Stock.get_all_data(stock.symbol)
+        @stock_data = stock.get_all_data
     end
 
     def create
-        if IexCloud.get_info(stock_params[:symbol])
-            new_stock = current_user.stocks.new
-            new_stock.assign_attributes(stock_params)
-            new_stock.save
-            flash[:success] = "#{stock_params[:symbol]} Submitted"
+        if Stock.validate_symbol(stock_params[:symbol])
+            if current_user.tracking_symbol?(stock_params[:symbol])
+                flash[:info] = "You are already tracking this symbol"
+            else
+                new_stock = current_user.stocks.new
+                new_stock.assign_attributes(stock_params)
+                new_stock.update_company_info
+                new_stock.save
+                flash[:success] = "#{stock_params[:symbol]} Submitted"
+            end
         else 
             flash[:alert] = "Unable to find stock with symbol: #{stock_params[:symbol]}"
         end

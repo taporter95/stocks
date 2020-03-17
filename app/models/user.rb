@@ -5,4 +5,8 @@ class User < ApplicationRecord
          :recoverable, :rememberable, :validatable
 
   has_many :stocks
+
+  def tracking_symbol?(symbol)
+    self.stocks.where(symbol: symbol).exists?
+  end
 end

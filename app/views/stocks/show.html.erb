@@ -5,49 +5,47 @@
             <br>
             <div>
                 <h2>
-                    <%= @stock_data[:info][:company].company_name %>
+                    <%= @stock_data[:info].company_name %>
                 </h2>
                 <br>
                 <p>
                     <strong>Symbol:</strong>
-                    <%= @stock_data[:info][:company].symbol %>
+                    <%= @stock_data[:info].symbol %>
                 </p>
                 <p>
                     <strong>Exchange:</strong>
-                    <%= @stock_data[:info][:company].exchange %>
+                    <%= @stock_data[:info].exchange %>
                 </p>
                 <p>
                     <strong>Industry:</strong>
-                    <%= @stock_data[:info][:company].industry %>
+                    <%= @stock_data[:info].industry %>
                 </p>
                 <p>
                     <strong>CEO:</strong>
-                    <%= @stock_data[:info][:company].ceo %>
+                    <%= @stock_data[:info].ceo %>
                 </p>
                 <p>
                     <strong>Issue type:</strong>
-                    <%= @stock_data[:info][:company].issue_type %>
+                    <%= @stock_data[:info].issue_type %>
                 </p>
                 <p>
                     <strong>Sector:</strong>
-                    <%= @stock_data[:info][:company].sector %>
+                    <%= @stock_data[:info].sector %>
                 </p>
                 <p>
                     <strong>Website:</strong>
-                    <%= link_to @stock_data[:info][:company].website, @stock_data[:info][:company].website, target: "_blank" %>
+                    <%= link_to @stock_data[:info].website, @stock_data[:info].website, target: "_blank" %>
                 </p>
                 <br>
                 <p>
-                    <%= @stock_data[:info][:company].description %>
+                    <%= @stock_data[:info].description %>
                 </p>
             </div>
         </div>
     </div>
     <div class="col-8">
         <div class="container-fluid">
-            <%= line_chart @stock_data[:sma_chart][:data], xtitle: "Simple Moving Average", prefix: "$", min: @stock_data[:sma_chart][:graph_min], max: @stock_data[:sma_chart][:graph_max] %>
-            <br>
-            <%= line_chart @stock_data[:ema_chart][:data], xtitle: "Exponential Moving Average", prefix: "$", min: @stock_data[:ema_chart][:graph_min], max: @stock_data[:ema_chart][:graph_max] %>
+            <%= line_chart @stock_data[:chart], prefix: "$", min: @stock_data[:chart_min], max: @stock_data[:chart_max] %>
             <br>
             <div>
                 <label for="last-thirty-days" class="mr-2">Last Thirty Days</label>

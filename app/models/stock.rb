@@ -3,33 +3,51 @@ class Stock < ApplicationRecord
 
     belongs_to :user
 
-    def self.get_all_data(symbol)
-        chart_data = IexCloud.get_chart(symbol)
+    def self.validate_symbol(symbol)
+        client = IEX::Api::Client.new
+        begin
+            price = client.price(symbol)
+            if price 
+                return true
+            else
+                return false
+            end
+        rescue => e
+            return false
+        end
+    end
+
+    def update_company_info
+        client = IEX::Api::Client.new
+        info = client.company(self.symbol)
+        self.update_attributes(company_name: info.company_name, exchange: info.exchange, sector: info.sector, website: info.website)
+        self.save
+    end
+
+    def get_all_data
+        client = IEX::Api::Client.new
+        chart_data = client.chart(self.symbol, '3m', sort: "desc")
         only_closing = chart_data.map {|m| m.close}
-        smas = get_simple_moving_averages(only_closing, 30, 10)
-        emas = get_exponential_moving_averages(only_closing, 30, 10)
-        sma_chart_data = {}
+        smas = Stock.get_simple_moving_averages(only_closing, 30, 10)
+        emas = Stock.get_exponential_moving_averages(only_closing, 30, 10)
         ema_chart_data = {}
+        closing_chart_data = {}
         last_thirty = chart_data[0...30]
-        last_thirty.reverse.each_with_index do |datapoint, i|
-            sma_chart_data[datapoint.date] = smas[i]
+        last_thirty.each_with_index do |datapoint, i|
             ema_chart_data[datapoint.date] = emas[i]
+            closing_chart_data[datapoint.date] = only_closing[i]
         end
         payload = {
-            info: IexCloud.get_info(symbol),
+            info: client.company(self.symbol),
             last_thirty: last_thirty,
             smas: smas,
             emas: emas,
-            sma_chart: {
-                data: sma_chart_data,
-                graph_min: graph_min(smas),
-                graph_max: graph_max(smas)
-            },
-            ema_chart: {
-                data: ema_chart_data,
-                graph_min: graph_min(emas),
-                graph_max: graph_max(emas)
-            }
+            chart: [
+                {name: "Closing Value", data: closing_chart_data},
+                {name: "Exponential Moving Average", data: ema_chart_data}
+            ],
+            chart_min: only_closing[0...30].min < emas.min ? only_closing[0...30].min : emas.min,
+            chart_max: only_closing[0...30].max > emas.max ? only_closing[0...30].max : emax.max
         }
     end
 
@@ -57,38 +75,16 @@ class Stock < ApplicationRecord
             exponential_moving_averages << ema(closing_values[i], exponential_moving_averages.last, period)
         end
         exponential_moving_averages.reverse
-    end
+    end 
 
-    def self.graph_min(data)
-        gmin = 0
-        magnitude = 10
-        minimum = data.min.floor
-        while minimum % magnitude != minimum
-            magnitude *= 10
-        end
-        magnitude /= 10
-        gmin = minimum - (minimum % magnitude)
-    end
-
-    def self.graph_max(data)
-        gmax = 0
-        magnitude = 10
-        maximum = data.max.ceil
-        while maximum % magnitude != maximum
-            magnitude *= 10
-        end
-        magnitude /= 10
-        gmax = maximum + (magnitude - (maximum % magnitude))
-    end
-
-    private 
+    private
 
     def self.sma(closing_values, for_day, period)
         current_sum = 0
         (0...period).each do |i|
             current_sum += closing_values[for_day + i]
         end
-        (current_sum / period).round(2)
+        (current_sum.to_f / period).round(2)
     end
 
     def self.ema(price, last_ema, period)
