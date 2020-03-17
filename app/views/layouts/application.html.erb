@@ -10,9 +10,12 @@
   </head>
 
   <body>
-    <p class="notice"><%= notice %></p>
-    <p class="alert"><%= alert %></p>
-    <%= link_to "Logout", destroy_user_session_path, method: :delete %>
-    <%= yield %>
+    <%= render 'layouts/navbar' %>
+    <%= render 'layouts/alerts' %>
+    <br>
+    <main class="container-fluid">
+      <%= yield %>
+    </main>
+    <%= render 'layouts/footer' %>
   </body>
 </html>

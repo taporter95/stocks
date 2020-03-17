@@ -1,0 +1,73 @@
+<%= link_to "Stocks Index", root_path %>
+<br>
+<br>
+<div>
+    <h2>
+        <%= @stock_info[:company].company_name %>
+    </h2>
+    <br>
+    <p>
+        <strong>Symbol:</strong>
+         <%= @stock_info[:company].symbol %>
+    </p>
+    <p>
+        <strong>Exchange:</strong>
+        <%= @stock_info[:company].exchange %>
+    </p>
+    <p>
+        <strong>Industry:</strong>
+        <%= @stock_info[:company].industry %>
+    </p>
+    <p>
+        <strong>Website:</strong>
+        <%= link_to @stock_info[:company].website, @stock_info[:company].website, target: "_blank" %>
+    </p>
+    <p>
+        <strong>Description:</strong>
+        <%= @stock_info[:company].description %>
+    </p>
+    <p>
+        <strong>CEO:</strong>
+        <%= @stock_info[:company].ceo %>
+    </p>
+    <p>
+        <strong>Issue type:</strong>
+        <%= @stock_info[:company].issue_type %>
+    </p>
+    <p>
+        <strong>Sector:</strong>
+        <%= @stock_info[:company].sector %>
+    </p>
+</div>
+<br>
+<div>
+    <label for="last-thirty-days" class="mr-2">Last Thirty Days</label>
+    <table class="table" id="last-thirty-days">
+        <thead id="chart-head" class="thead-light">
+            <tr>
+                <th scope="col">Date</th>
+                <th scope="col">Open</th>
+                <th scope="col">Close</th>
+                <th scope="col">High</th>
+                <th scope="col">Low</th>
+                <th scope="col">Volume</th>
+                <th scope="col">10 Day SMA</th>
+                <th scope="col">10 Day EMA</th>
+            </tr>
+        </thead>
+        <tbody id="stock-list-body">
+            <% @last_thirty.each_with_index do |datapoint, i| %>
+                <tr>
+                    <td><%= datapoint.date %></td>
+                    <td>$<%= datapoint.open %></td>
+                    <td>$<%= datapoint.close %></td>
+                    <td>$<%= datapoint.high %></td>
+                    <td>$<%= datapoint.low %></td>
+                    <td><%= datapoint.volume %></td>
+                    <td>$<%= @SMAs[i] %>
+                    <td>$<%= @EMAs[i] %>
+                </tr>
+            <% end %>
+        </tbody>
+    </table>
+</div>
