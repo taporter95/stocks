@@ -1,0 +1,14 @@
+<div id="navbar" class="navbar navbar-expand navbar-fixed-top navbar-light bg-light">
+    <div class="container-fluid">
+        <div class="navbar-brand">
+            Simple Stocks
+        </div>
+        <ul class="nav">
+            <li class="nav-item">
+                <% if user_signed_in? %>
+                    <%= link_to "Logout", destroy_user_session_path, method: :delete, class: "btn btn-sm btn-secondary ml-2" %>
+                <% end %>
+            </li>
+        </ul>
+    </div>
+</div>

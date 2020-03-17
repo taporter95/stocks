@@ -1,0 +1,7 @@
+<div>
+    <% {alert: :warning, error: :danger, warning: :warning, success: :success, info: :info, maintenance: :info}.each do |flash_key, alert_css| %>
+        <% if flash[flash_key.to_sym] %>
+            <p class="alert <%= "alert-#{alert_css.to_s}" %> full-width"><%= flash[flash_key.to_sym].html_safe %></p>
+        <% end %>
+    <% end %>
+</div>
