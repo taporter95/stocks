@@ -3,6 +3,36 @@ class Stock < ApplicationRecord
 
     belongs_to :user
 
+    def self.get_all_data(symbol)
+        chart_data = IexCloud.get_chart(symbol)
+        only_closing = chart_data.map {|m| m.close}
+        smas = get_simple_moving_averages(only_closing, 30, 10)
+        emas = get_exponential_moving_averages(only_closing, 30, 10)
+        sma_chart_data = {}
+        ema_chart_data = {}
+        last_thirty = chart_data[0...30]
+        last_thirty.reverse.each_with_index do |datapoint, i|
+            sma_chart_data[datapoint.date] = smas[i]
+            ema_chart_data[datapoint.date] = emas[i]
+        end
+        payload = {
+            info: IexCloud.get_info(symbol),
+            last_thirty: last_thirty,
+            smas: smas,
+            emas: emas,
+            sma_chart: {
+                data: sma_chart_data,
+                graph_min: graph_min(smas),
+                graph_max: graph_max(smas)
+            },
+            ema_chart: {
+                data: ema_chart_data,
+                graph_min: graph_min(emas),
+                graph_max: graph_max(emas)
+            }
+        }
+    end
+
     def self.get_simple_moving_averages(closing_values, total_days, period) 
         simple_moving_averages = []
         if closing_values.length < total_days + period
@@ -27,6 +57,28 @@ class Stock < ApplicationRecord
             exponential_moving_averages << ema(closing_values[i], exponential_moving_averages.last, period)
         end
         exponential_moving_averages.reverse
+    end
+
+    def self.graph_min(data)
+        gmin = 0
+        magnitude = 10
+        minimum = data.min.floor
+        while minimum % magnitude != minimum
+            magnitude *= 10
+        end
+        magnitude /= 10
+        gmin = minimum - (minimum % magnitude)
+    end
+
+    def self.graph_max(data)
+        gmax = 0
+        magnitude = 10
+        maximum = data.max.ceil
+        while maximum % magnitude != maximum
+            magnitude *= 10
+        end
+        magnitude /= 10
+        gmax = maximum + (magnitude - (maximum % magnitude))
     end
 
     private 

@@ -1,23 +1,9 @@
 class StocksController < ApplicationController
     def index
-        # if request.xhr?
-        #     render json: {stocks_list: IexCloud.get_list(params[:list_selection])}
-        # end
-        # if stock_params[:symbol]
-        #     redirect_to info_stocks_path(symbol: stock_params[:symbol])
-        # end
-        # @list = IexCloud.get_list('mostactive')
-        #@stocks = current_user.stocks.all
-        #binding.pry
     end
 
     def show 
-        @stock_info = IexCloud.get_info(stock.symbol)
-        chart_data = IexCloud.get_chart(stock.symbol)
-        only_closing = chart_data.map {|m| m.close}
-        @last_thirty = chart_data[0...30]
-        @SMAs = Stock.get_simple_moving_averages(only_closing, 30, 10)
-        @EMAs = Stock.get_exponential_moving_averages(only_closing, 30, 10)
+        @stock_data = Stock.get_all_data(stock.symbol)
     end
 
     def create
