@@ -6,8 +6,8 @@ class Stock < ApplicationRecord
     def self.validate_symbol(symbol)
         client = IEX::Api::Client.new
         begin
-            price = client.price(symbol)
-            if price 
+            info = client.company(symbol)
+            if info 
                 return true
             else
                 return false
@@ -26,6 +26,7 @@ class Stock < ApplicationRecord
 
     def get_all_data
         client = IEX::Api::Client.new
+        self.update_company_info
         chart_data = client.chart(self.symbol, '3m', sort: "desc")
         only_closing = chart_data.map {|m| m.close}
         smas = Stock.get_simple_moving_averages(only_closing, 30, 10)
@@ -47,7 +48,7 @@ class Stock < ApplicationRecord
                 {name: "Exponential Moving Average", data: ema_chart_data}
             ],
             chart_min: only_closing[0...30].min < emas.min ? only_closing[0...30].min : emas.min,
-            chart_max: only_closing[0...30].max > emas.max ? only_closing[0...30].max : emax.max
+            chart_max: only_closing[0...30].max > emas.max ? only_closing[0...30].max : emas.max
         }
     end
 
