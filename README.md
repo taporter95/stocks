@@ -11,7 +11,7 @@ Important Environment Variables:
 * IEX_API_SECRET_TOKEN
 * IEX_API_ENDPOINT
 
-Use test keys for development and testing as well as the sandbox endpoint. They will be prefixed by "Tpk_..." and "Tsk_...".
+Use sandbox keys for development and testing as well as the sandbox endpoint. They will be prefixed by "Tpk_..." and "Tsk_...".
 The sandbox endpoint is https://sandbox.iexapis.com/v1
 The endpoint for real data is https://cloud.iexapis.com/v1
 
