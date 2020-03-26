@@ -15,4 +15,22 @@ class StockTest < ActiveSupport::TestCase
     assert new_stock.errors.full_messages.include?("Symbol does not exist")
   end
 
+  test 'will return list of stocks and create any that do not exist yet' do 
+    IEX::Api::Client.any_instance.stubs(:get).returns([{"symbol"=>"MFA"}, 
+      {"symbol"=>"F"}, {"symbol"=>"GE"}, {"symbol"=>"BAC"}, 
+      {"symbol"=>"CCL"}, {"symbol"=>"AAL"}, {"symbol"=>"AMD"}, 
+      {"symbol"=>"OXY"}, {"symbol"=>"TLRY"}, {"symbol"=>"MSFT"}])
+    IEX::Api::Client.any_instance.stubs(:company).returns(
+      OpenStruct.new(company_name: "adadsgew", exchange: "gahrrh", sector: "ahhe", website: "ahehex/ahe/")
+    )
+    assert_equal 2, Stock.all.size
+    stocks = Stock.get_list("mostactive")
+    assert_equal 10, stocks.size
+    assert_equal 11, Stock.all.size
+  end
+
+  test 'will not return list for invalid list type' do
+    stocks = Stock.get_list("mostinactive")
+    assert_nil stocks
+  end
 end
