@@ -8,6 +8,18 @@
                 <%= form.submit "Submit", class: "btn btn-primary" %>
             <% end %>
         </div>
+        <div class="col-6 mt-3">
+            <fieldset class="float-right">
+                <input type="radio" id="select-submitted" class="list-select" name="list-select", value="submitted" checked>
+                <label for="select-mostactive" class="mr-2">Submitted</label>
+                <input type="radio" id="select-mostactive" class="list-select" name="list-select" value="mostactive">
+                <label for="select-mostactive" class="mr-2">Most Active</label>
+                <input type="radio" id="select-gainers" class="list-select" name="list-select" value="gainers">
+                <label for="select-gainers" class="mr-2">Gainers</label>
+                <input type="radio" id="select-losers" class="list-select" name="list-select" value="losers">
+                <label for="select-losers" class="mr-2">Losers</label>
+            </fieldset>
+        </div>
     </div>
     <div>
         <table class="table">

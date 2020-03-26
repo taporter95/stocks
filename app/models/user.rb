@@ -4,7 +4,8 @@ class User < ApplicationRecord
   devise :database_authenticatable, :registerable,
          :recoverable, :rememberable, :validatable
 
-  has_many :stocks
+  has_many :user_stocks
+  has_many :stocks, through: :user_stocks
 
   def tracking_symbol?(symbol)
     self.stocks.where(symbol: symbol).exists?

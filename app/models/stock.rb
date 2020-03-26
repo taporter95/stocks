@@ -1,8 +1,28 @@
 class Stock < ApplicationRecord
     validates :symbol, presence: true
+    validates :symbol, uniqueness: true
     validate :symbol_exists
 
-    belongs_to :user
+    has_many :user_stocks
+    has_many :users, through: :user_stocks
+
+    LIST_TYPES = ['mostactive', 'gainers', 'losers'].freeze
+
+    def self.get_list(list_type)
+        return nil unless LIST_TYPES.include? list_type
+        client = IEX::Api::Client.new
+        results = client.get("/stock/market/list/#{list_type}", token: Settings.iex.secret_token)
+        requested_symbols = results.map {|m| m["symbol"]}
+        list = Stock.where(symbol: requested_symbols).to_a
+        existing_symbols = list.map {|m| m.symbol}
+        needed_symbols = (requested_symbols - existing_symbols).uniq
+        needed_symbols.each do |symbol|
+            stock = Stock.find_or_create_by(symbol: symbol)
+            stock.update_company_info
+            list << stock
+        end
+        list
+    end
 
     def symbol_exists
         client = IEX::Api::Client.new
@@ -21,7 +41,6 @@ class Stock < ApplicationRecord
 
     def get_all_data
         client = IEX::Api::Client.new
-        self.update_company_info
         chart_data = client.chart(self.symbol, '3m', sort: "desc")
         only_closing = chart_data.map {|m| m.close}
         smas = MovingAverage.get_simple_moving_averages(only_closing, 30, 10)

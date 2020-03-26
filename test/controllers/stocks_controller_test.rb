@@ -17,12 +17,14 @@ class StocksControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "should create stock with valid symbol" do
-    Stock.any_instance.stubs(:update_company_info).returns(true)
+    IEX::Api::Client.any_instance.stubs(:company).returns(
+      OpenStruct.new(company_name: "adadsgew", exchange: "gahrrh", sector: "ahhe", website: "ahehex/ahe/")
+    )
     assert_difference('users(:test_user).stocks.count', 1) do
-      post stocks_path, params: { stock: { symbol: "BAC" } }
+      post stocks_path, params: { stock: { symbol: "NVDA" } }
     end
     assert_redirected_to root_path
-    assert_equal flash[:success], "BAC Submitted"
+    assert_equal flash[:success], "NVDA Submitted"
   end
 
   test "should not create stock with invalid symbol" do
